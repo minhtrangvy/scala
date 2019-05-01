@@ -1,0 +1,71 @@
+- implicits are a way to make the compiler write code for you
+- implicits will find answers to questions of: what satisifies this type in the implicit context?
+
+- if there are 2 objects of the same type in the implicit context, it'll throw an error in the repl
+scala> implicitly[Long]
+<console>:16: error: ambiguous implicit values:
+ both value someLong of type => Long
+ and value someOtherLong of type => Long
+ match expected type Long
+       implicitly[Long]
+
+
+trait First { 
+	implicit val firstLong: Long = 10L
+}
+trait Second extends First {
+	implicit val secondLong: Long = 20L
+}
+object Foo extends Second {
+	def whatIsIt: Long = implicitly[Long]
+}
+
+
+type Show[A] = A => String
+implicit val showLong: Show[Long] = _.toString
+implicit val showBoolean: Show[Boolean] = _.value
+implicit val showPII: Show[PII] = "***"
+implicit val showPII: Show[NotPII] = _.toString
+def doWork[A](value: A)(implicit ev: Show[A]): String = ev(value)
+implicit def showEither[A: Show, B: Show](value: Either[A, B]): String = value.fold(doWork(_), doWork(_))
+
+
+a type class is just a constraint
+- "could not prove" is just the compiler not being able to find that the types match
+
+
+SIMPLER / REAL LIFE EXAMPLE OF IMPLICITS
+scala> case class LoggingContext(requestSid: String, extra: Map[String, String])
+defined class LoggingContext
+
+scala> def logWithContext(s: String)(implicit context: LoggingContext) = println(s)
+logWithContext: (s: String)(implicit context: LoggingContext)Unit
+
+scala> logWithContext("asdf")
+<console>:13: error: could not find implicit value for parameter context: LoggingContext
+       logWithContext("asdf")
+                     ^
+
+scala> need to define implicit parameter
+
+scala> implicit val myContext = LoggingContext("RQ123", Map.empty)
+myContext: LoggingContext = LoggingContext(RQ123,Map())
+
+scala> logWithContext("asdf")
+asdf
+
+scala> cannot make 2 implicits in the same scope
+
+scala> implicit val myContext2 = LoggingContext("RQ123", Map.empty)
+myContext2: LoggingContext = LoggingContext(RQ123,Map())
+
+scala> logWithContext("asdf")
+<console>:15: error: ambiguous implicit values:
+ both value myContext of type => LoggingContext
+ and value myContext2 of type => LoggingContext
+ match expected type LoggingContext
+       logWithContext("asdf")
+
+
+can manually pass in what you think the implicit should be in  order to debug
+logWithContext("asdf")(LoggingContext("asdf", Map.empty))
