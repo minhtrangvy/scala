@@ -1,0 +1,92 @@
+scala> List(1,2,3).flatMap(i=>List('a,'b,'c).flatMap(j=>Option(i,j)))
+res0: List[(Int, Symbol)] = List((1,'a), (1,'b), (1,'c), (2,'a), (2,'b), (2,'c), (3,'a), (3,'b), (3,'c))
+
+- flatmap gets rid of Nones
+
+
+package objects! 
+here are 3 different ways to do the same thing:
+scala> :paste
+// Entering paste mode (ctrl-D to finish)
+
+package bar {
+  package object implicits {
+    implicit class EnrichedString(value: String) {
+      def exclamify: String = s"${value.toUpperCase}!!!!"
+    }
+  }
+}
+
+package foo {
+  import bar.implicits._
+  object Foo {
+    def apply(): Unit = {
+      println("hello world".exclamify)
+    }
+  }
+}
+
+// Exiting paste mode, now interpreting.
+
+
+scala> foo.Foo()
+HELLO WORLD!!!!
+
+
+
+
+
+way 2 
+scala> :paste
+// Entering paste mode (ctrl-D to finish)
+
+package bar {
+  package object implicits {
+    implicit class EnrichedString(value: String) {
+      def exclamify: String = s"${value.toUpperCase}!!!!"
+    }
+  }
+}
+
+package foo {
+  import bar.implicits.EnrichedString
+  object Foo {
+    def apply(): Unit = {
+      println("hello world".exclamify)
+    }
+  }
+}
+
+// Exiting paste mode, now interpreting.
+
+
+scala> foo.Foo()
+HELLO WORLD!!!!
+
+
+
+
+way 3
+
+scala> :paste
+// Entering paste mode (ctrl-D to finish)
+
+package object bar {
+  implicit class EnrichedString(value: String) {
+    def exclamify: String = s"${value.toUpperCase}!!!!"
+  }
+}
+
+package bar {
+  object Foo {
+    def apply(): Unit = {
+      println("hello world".exclamify)
+    }
+  }
+}
+
+// Exiting paste mode, now interpreting.
+
+
+scala> bar.Foo()
+HELLO WORLD!!!!
