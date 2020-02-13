@@ -1,0 +1,6 @@
+#FileLock
+#Thu Feb 13 11:34:05 PST 2020
+hostName=10.20.68.131
+id=170400b445e42bf8809374e7c09954edd2a1c345c94
+method=file
+server=10.20.68.131\:50299

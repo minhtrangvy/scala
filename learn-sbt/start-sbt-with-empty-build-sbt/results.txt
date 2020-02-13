@@ -1,0 +1,5 @@
+if there's a build.sbt in the high level project folder, sbt will create a build.properties and put the latest (or currently installed) version of sbt 
+
+but if there's no build.sbt, it won't create the build.properties
+
+and also, some additional folders are created in the "project" folder

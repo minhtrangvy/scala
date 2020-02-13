@@ -1,0 +1,5 @@
+Q: why does `sbt run` know to run the object in /src/main/scala/example/Hello.scala and not core/src/main/scala/example/core/Weather.scala when both objects extends App? 
+
+
+Notes:
+- using "session set" will save all changes to the current session (i.e. scalaVersion) to build.sbt for future runs 
